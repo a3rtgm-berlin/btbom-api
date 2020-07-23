@@ -85,7 +85,8 @@ module.exports = async function createRpn(req, res) {
     const rpn = new RPN({
         id: id,
         parts: [...meta, ...allParts],
-        updated: new Date()
+        updated: new Date(),
+        hasConsumption: false
     });
 
     rpn.save((err, rpn) => {
