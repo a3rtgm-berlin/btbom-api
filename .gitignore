@@ -3,4 +3,7 @@
 
 /user-upload
 /keys/*.key
+deploy.sh
 dev.sh
+docker-compose.yml
+Dockerfile
