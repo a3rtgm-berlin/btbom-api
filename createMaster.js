@@ -101,10 +101,10 @@ async function calculateCarts(list) {
                 parts: 1,
                 wagons: 1,
                 bins: 2
-            }
+            };
             return [...res, newLocation];
         }
-    }, [])
+    }, []);
     locations.forEach(location => {
         const locationFromMatrix = arbMatrix.json.find(stat => stat.Location === location.Location);
         const wagonSize = locationFromMatrix ? locationFromMatrix.WagonSize : 60;
