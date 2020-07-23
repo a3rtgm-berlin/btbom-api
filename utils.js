@@ -3,6 +3,16 @@ const Project = require("./models/project");
 const ExcludeList = require("./models/exclude");
 const ArbMatrix = require("./models/matrix");
 
+function getPrevId (id) {
+    let oldDate = new Date(id);
+    let newDate = new Date(oldDate.setMonth(oldDate.getMonth() - 1));
+
+    const year = newDate.getUTCFullYear();
+    const month = newDate.getMonth() + 1 < 10 ? '0' + (newDate.getMonth() + 1) : newDate.getMonth() + 1;
+
+    return year + '-' + month;
+}
+
 function updateSingleBom(bom, res) {
     Project.findOne({tag: bom.project}, (err, project) => {
         if (err) {
@@ -101,5 +111,6 @@ module.exports = {
     updateExcludesAndMatrix,
     mapMatrix,
     convertLocaleStringToNumber,
-    mergeDuplicates
-}
+    mergeDuplicates,
+    getPrevId
+};

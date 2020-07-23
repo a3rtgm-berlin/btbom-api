@@ -7,6 +7,7 @@ const template = require('./rpn.template.json');
 module.exports = async function createRpn(req, res) {
     var id = req.params.id,
         master = await MasterBom.findOne({id: id}).exec(),
+        prevRPN = await RPN.find().sort({updated: -1}).limit(1),
         projectsRegex = master.projects.map(tag => new RegExp(tag)),
         boms = await Bom.find({
             $and: [
@@ -24,6 +25,7 @@ module.exports = async function createRpn(req, res) {
                     Description: '',
                     Unit: '',
                     ovCount: 0,
+                    percentage: 1,
                     monthlyCount: 0,
                     phaseOutDate: '',
                     projects: []
@@ -34,7 +36,7 @@ module.exports = async function createRpn(req, res) {
 
                 return map;
             }),
-        projects = await Project.find({tag: {$in: master.projects}}).exec();
+        projects = await Project.find({tag: {$in: master.projects}}).exec(),
         meta = template;
 
     projects.forEach(project => {
@@ -70,11 +72,20 @@ module.exports = async function createRpn(req, res) {
                 }
             }
         });
+
+        if (prevRPN.length > 0) {
+            const prevPart = prevRPN[0].parts.find(p => p.Part == part.Part);
+
+            if (prevPart) {
+              part.percentage = part.ovCount / prevPart.ovCount - 1;
+            }
+        }
     });
 
     const rpn = new RPN({
         id: id,
-        parts: [...meta, ...allParts]
+        parts: [...meta, ...allParts],
+        updated: new Date()
     });
 
     rpn.save((err, rpn) => {

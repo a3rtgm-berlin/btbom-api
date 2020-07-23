@@ -11,7 +11,7 @@
     "start": "env NODE_ENV=production nodemon server.js",
     "dev": "env NODE_ENV=development nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "debug": "nodemon --inspect server.js"
+    "debug": "env NODE_ENV=development nodemon --inspect server.js"
   },
   "author": "a3rtgm-ds",
   "license": "ISC",
