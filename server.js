@@ -37,7 +37,7 @@ const Planogram = require("./models/planogram");
 
 // Constants
 const HOST = process.env.NODE_ENV === 'development' ? 'localhost' : '0.0.0.0';
-const PORT = process.env.NODE_ENV === 'development' ? 8000 : 8080;
+const PORT = process.env.NODE_ENV === 'development' ? 8000 : 80;
 
 // App
 const app = express();
