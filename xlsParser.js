@@ -1,4 +1,4 @@
-const XLSX = require('../node_modules/xlsx');
+const XLSX = require('xlsx');
 const MasterBom = require("./models/masterBom");
 
 

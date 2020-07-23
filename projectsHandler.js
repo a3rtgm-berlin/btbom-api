@@ -1,4 +1,4 @@
-const IncomingForm = require('../node_modules/formidable').IncomingForm;
+const IncomingForm = require('formidable').IncomingForm;
 const Project = require("./models/project");
 
 const newProject = function(req, res, next) {

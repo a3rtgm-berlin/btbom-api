@@ -1,4 +1,4 @@
-const d3 = require('../node_modules/d3');
+const d3 = require('d3');
 const ArbMatrix = require('./models/matrix');
 const ExcludeList = require('./models/exclude');
 const Part = require('./models/part');
