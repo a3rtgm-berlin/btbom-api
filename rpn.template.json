@@ -1,0 +1,29 @@
+[
+    {
+        "Part": "Weeks remaining", 
+        "Description": "Time between now and set deadline",
+        "Unit": "",
+        "ovCount": "",
+        "monthlyCount": "",
+        "phaseOutDate": "",
+        "projects": ""
+    },
+    {
+        "Part": "Trains per Week", 
+        "Description": "Average value calculated from train count and deadline",
+        "Unit": "",
+        "ovCount": "",
+        "monthlyCount": "",
+        "phaseOutDate": "",
+        "projects": ""
+    },
+    {
+        "Part": "Trains left", 
+        "Description": "Number of trains left in the project",
+        "Unit": "",
+        "ovCount": "",
+        "monthlyCount": "",
+        "phaseOutDate": "",
+        "projects": ""
+    }
+]
