@@ -302,7 +302,7 @@ app.get('/api/master/create/:id', createMaster);
  * @method get
  */
 app.get('/api/master/rebuild/:id', (req, res) => auth.guard(req, res, (role) => {
-    if (role > 1) return res.sendStatus(401);
+    if (role > 2) return res.sendStatus(401);
 
     const q = req.params.id;
 
