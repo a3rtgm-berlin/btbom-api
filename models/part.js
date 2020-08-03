@@ -14,7 +14,7 @@ module.exports = class Part {
         // this.KatID = catId;
 
         // relevant rows from csv
-        this['Part'] = d["MaterialP"]; // Part#
+        this['Part'] = d["MaterialP"] || d["MaterialPos."]; // Part# <== FALLBACK IF COLUMN IS NAMED INCONSISTENTLY
         this['Description'] = d["Objektkurztext"]; // Description
         this['Quantity Per Train'] = utils.convertLocaleStringToNumber(d["Menge"]); // Quantity Per Train
         this['Quantity Total'] = this['Quantity Per Train'] * trainsPending; // Total Quantity
@@ -31,5 +31,22 @@ module.exports = class Part {
         // this.ArbPlatz = d["ArbPlatz"];
         // this.Station = d["ArbPlatz"] ? this.mapMatrix(d["ArbPlatz"], arbMatrix) : "No Location"; // Location
         // this.id = this.Station + this.Material; // Location Index
+
+        // CHECK FOR MISSING COLUMNS
+        let missingCols = [];
+
+        if (!this['Part']) {
+            missingCols.push('Material P');
+        }
+        if (!d['Menge']) {
+            missingCols.push('Menge');
+        }
+        if (!this['Unit']) {
+            missingCols.push('ME');
+        }
+
+        if (missingCols.length > 0) {
+            throw new Error('Following required Columns are undefined: ' + missingCols.join(', ') + '. File is incompatible.');
+        }
     }
 };

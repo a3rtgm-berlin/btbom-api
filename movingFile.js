@@ -6,13 +6,6 @@ module.exports = class MovingFile {
             'Part',
         ];
 
-        // const sortedLists = boms.sort((a, b) => {
-        //     var dateA = a.date.split('.');
-        //     var dateB = b.date.split('.');
-        //     var diff = new Date(dateA[2], dateA[1] - 1, dateA[0]) - new Date(dateB[2], dateB[1] - 1, dateB[0]);
-        //     return diff !== 0 ? diff : a.uploadDate - b.uploadDate;
-        // });
-
         console.log('creating POG', Source.id, Target.id);
 
         console.log(Source.json.length, Target.json.length);
@@ -42,44 +35,53 @@ module.exports = class MovingFile {
             obsolete: 0,
         };
 
+        // check if parts existed on any location before
         this.currentBom.json.forEach((currentItem) => {
-            // let $ancestors = this.lastBom.json;
             const ancestor = this.lastBom.json.find(oldItem => oldItem['Location Index'] === currentItem['Location Index']);
 
+            // compare quantities if part existed on location before
             if (ancestor) {
                 const diff = currentItem[this.quantity] - ancestor[this.quantity];
                 currentItem.Change = diff;
 
                 if (diff !== 0) {
                     movingMeta.modified += 1;
-                    currentItem.Status = 'remain';
                 }
                 else {
                     movingMeta.remain += 1;
-                    currentItem.Status = 'remain';
                 }
+
+                currentItem.Status = 'remain';
             }
+
+            // add to newly added parts list
             else {
                 $added.add(currentItem);
             }
         });
 
+        // check if old parts still exist on their location
         this.lastBom.json.forEach(oldItem => {
             const successor = this.currentBom.json.find(currentItem => oldItem['Location Index'] === currentItem['Location Index']);
 
-            if (!successor) {
-                $removed.add(oldItem);
+            // compare quanities if true
+            if (successor) {
+                oldItem.Change = oldItem[this.quantity] - successor[this.quantity];
             }
+
+            // add to removed parts list if not
             else {
-                oldItem.Change = successor[this.quantity] - oldItem[this.quantity];
+                $removed.add(oldItem);
             }
         });
 
         console.log('half time', this.currentBom.json.length, $added.size, $removed.size);
 
+        // check for all added parts if they are new or can be moved from another station
         $added.forEach((e, currentItem, s) => {
             const $ancestor = Array.from($removed).find(oldItem => oldItem.Part == currentItem.Part);
 
+            // assign moving directives if true
             if ($ancestor) {
                 $added.delete(currentItem);
                 $removed.delete($ancestor);
@@ -92,6 +94,8 @@ module.exports = class MovingFile {
                 currentItem.Moved = $ancestor.Location;
 
                 movingMeta.Moved += 1;
+
+            // set to "added" status if not
             } else {
                 currentItem.Status = 'added';
                 movingMeta.added += 1;
@@ -100,24 +104,42 @@ module.exports = class MovingFile {
 
         console.log($added.size, $removed.size);
 
-        $removed.forEach((e, oldItem, s) => {
-            oldItem.Status = "removed";
-            movingMeta.removed += 1;
+        // check for occurences of a removed Part in currentBom
+        $removed.forEach((e, oldItem) => {
+            // set obsolete if none
+            if (!this.currentBom.json.find(currentItem => currentItem.Part == oldItem.Part)) {
+                oldItem.Status = "obsolete";
+                movingMeta.obsolete += 1;
+
+                // remove all other occurences of the item from the removed list
+                $removed.forEach((k, removedItem) => {
+                    if (removedItem.Part == oldItem.Part) {
+                        $removed.delete(val);
+                    }
+                });
+
+            // set removed status if item somewhere on currentBom
+            } else {
+                oldItem.Status = "redistributed";
+                movingMeta.removed += 1;
+            }
+
+            // push removed and obsoletes to currentBom
             this.currentBom.json.push(oldItem);
         });
 
-        this.currentBom.json.forEach(item => {
-            if (item.Status === "removed") {
-                if (!this.currentBom.json.find(currentItem => 
-                    currentItem.Part == item.Part && 
-                    currentItem.Location !== item.Location && 
-                    currentItem.Status !== "removed")) {
-                        item.Status = "obsolete";
-                        movingMeta.removed -= 1;
-                        movingMeta.obsolete += 1;
-                    }
-            }
-        });
+        // this.currentBom.json.forEach(item => {
+        //     if (item.Status === "removed") {
+        //         if (!this.currentBom.json.find(currentItem => 
+        //             currentItem.Part == item.Part && 
+        //             currentItem.Location !== item.Location && 
+        //             currentItem.Status !== "removed")) {
+        //                 item.Status = "obsolete";
+        //                 movingMeta.removed -= 1;
+        //                 movingMeta.obsolete += 1;
+        //             }
+        //     }
+        // });
 
         console.log(this.currentBom.json.length);
 

@@ -73,20 +73,23 @@ app.use((req, res, next) => {
 
 // Connect DB
 function connectDB() {
-    if (!process.env.DB_DATA) {;
+    if (!process.env.DB_DATA) {
         return console.error('DB credentials are not defined! Please start the app using "env DB_DATA=<user:pwd>".');
     }
-    try {
-        mongoose.connect('mongodb://' + process.env.DB_DATA + '@api.creative-collective.de:27017/fstnl-bom-mngr-2', { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true })
-            .then(() => console.log('successfully connected to DB'));
-        // mongoose.connect('mongodb://' + process.env.DB_DATA + '@api.creative-collective.de:27017/fstnl-bom-mngr-test', { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true })
-        //     .then(() => console.log('successfully connected to DB'));
-    }
-    catch (e) {
-        console.error(e);
-        console.log('Attempt to log into DB failed. Trying again');
-        connectDB();
-    }
+    // mongoose.connect('mongodb://' + process.env.DB_DATA + '@api.creative-collective.de:27017/fstnl-bom-mngr-2', { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true })
+        // .then(() => console.log('successfully connected to DB'))
+        // .catch(() => {
+        //     console.error(e);
+        //     console.log('Attempt to log into DB failed. Trying again');
+        //     connectDB();
+        // });
+    mongoose.connect('mongodb://' + process.env.DB_DATA + '@api.creative-collective.de:27017/fstnl-bom-mngr-test', { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true })
+        .then(() => console.log('successfully connected to DB'))
+        .catch(() => {
+            console.error(e);
+            console.log('Attempt to log into DB failed. Trying again');
+            connectDB();
+        });
 }
 connectDB();
 

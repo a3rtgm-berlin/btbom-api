@@ -32,14 +32,14 @@ function filterData (d, arbMatrix, excludeList, trainsPending) {
         catName = "";
 
     if (d.ArbPlatz === "INV") {
-        catId = d["MaterialP"];
+        catId = d["MaterialP"] || d["MaterialPos."];
         catName = d["Objektkurztext"];
     } else {
-        if (!excludeList.map(row => row.Part).includes(d["MaterialP"])) {
+        const part = d["MaterialP"] || d["MaterialPos."];
+
+        if (!excludeList.map(row => row.Part).includes(part)) {
             if (d.SchGut === "X") {
-                if (d.MArt === "ROH" || d.MArt === "HALB") {
-                    return new Part(d, catId, catName, arbMatrix, trainsPending);
-                }
+                return new Part(d, catId, catName, arbMatrix, trainsPending);
             }
         }
     }

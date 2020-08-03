@@ -36,7 +36,7 @@ async function bom(req, res) {
         // Parse & Save to Disk
         reader.readAsArrayBuffer(file);
 
-        const readFile = new Promise((res, rej) => {
+        const readFile = new Promise((resolve, reject) => {
             reader.onload = async (evt) => {
                 const view = new Uint8Array(reader.result);
     
@@ -47,27 +47,51 @@ async function bom(req, res) {
                 // send csv to csvHandler and wait for resolution
                 // return the new data-object
                 // send the json back to the client as response
-                res(await addJson(newDatum));
+                // if null values are retrieved from input return error to client
+                try {
+                    const newBom = await addJson(newDatum);
+                    resolve(newBom);
+                }
+                catch (e) {
+                    reject(e);
+                }
             };
         });
 
-        if (await saveBomAndUpdateProject(await readFile)) {
-            res.json();
-        } else {
-            res.sendStatus(500);
+        try {
+            const newBom = await readFile;
+
+            if (await saveBomAndUpdateProject(newBom)) {
+                res.json();
+            } else {
+                res.sendStatus(500);
+            }
+        }
+        catch (e) {
+            res.status(422).send(e);
+            return console.error(e);
         }
     });
 }
 
-async function addJson (datum) {
+function addJson (datum) {
     // wait for the d3.dsv-handler to filter and convert the csv-string
-    let promise = new Promise ((res, rej) => {
-        res(csvHandler.csvToJson(datum.csv, datum.project));
+    return new Promise ((resolve, reject) => {
+        let promise = new Promise ((res, rej) => {
+            const json = csvHandler.csvToJson(datum.csv, datum.project);
+    
+            res(json);
+        })
+            .then(json => {
+                datum.json = json;
+                delete datum.csv;
+            
+                resolve(datum);
+            })
+            .catch(e => {
+                reject(new Error('File format is not correct. One or more required columns could not be parsed. Please check file format an submit again. Original ' + e));
+            });
     });
-    datum.json = await promise;
-    delete datum.csv;
-
-    return datum;
 }
 
 function consumption (req, res) {
