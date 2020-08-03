@@ -114,7 +114,7 @@ module.exports = class MovingFile {
                 // remove all other occurences of the item from the removed list
                 $removed.forEach((k, removedItem) => {
                     if (removedItem.Part == oldItem.Part) {
-                        $removed.delete(val);
+                        $removed.delete(removedItem);
                     }
                 });
 
