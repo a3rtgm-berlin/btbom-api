@@ -68,7 +68,9 @@ async function bom(req, res) {
             }
         }
         catch (e) {
-            res.status(422).send(e);
+            res.status(422).send({
+                message: e.message,
+            });
             return console.error(e);
         }
     });
