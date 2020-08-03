@@ -14,7 +14,7 @@ module.exports = class Part {
         // this.KatID = catId;
 
         // relevant rows from csv
-        this['Part'] = d["MaterialP"] || d["MaterialPos."]; // Part# <== FALLBACK IF COLUMN IS NAMED INCONSISTENTLY
+        this['Part'] = utils.formatPart(d["MaterialP"] || d["MaterialPos."]); // Part# <== FALLBACK IF COLUMN IS NAMED INCONSISTENTLY
         this['Description'] = d["Objektkurztext"]; // Description
         this['Quantity Per Train'] = utils.convertLocaleStringToNumber(d["Menge"]); // Quantity Per Train
         this['Quantity Total'] = this['Quantity Per Train'] * trainsPending; // Total Quantity

@@ -3,6 +3,15 @@ const Project = require("./models/project");
 const ExcludeList = require("./models/exclude");
 const ArbMatrix = require("./models/matrix");
 
+function formatPart (part) {
+    if (part) {
+        return part.toString().toUpperCase();
+    }
+    else {
+        return undefined;
+    }
+}
+
 function getPrevId (id) {
     let oldDate = new Date(id);
     let newDate = new Date(oldDate.setMonth(oldDate.getMonth() - 1));
@@ -112,5 +121,6 @@ module.exports = {
     mapMatrix,
     convertLocaleStringToNumber,
     mergeDuplicates,
-    getPrevId
+    getPrevId,
+    formatPart
 };
