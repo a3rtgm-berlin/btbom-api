@@ -77,13 +77,16 @@ module.exports = class MovingFile {
 
         console.log('half time', this.currentBom.json.length, $added.size, $removed.size);
 
-        /*REMOVE MOVEDs*/
+       
         // check for all added parts if they are new or can be moved from another station
-        /*$added.forEach((e, currentItem, s) => {
-            const $ancestor = Array.from($removed).find(oldItem => oldItem.Part == currentItem.Part);
+        $added.forEach((e, currentItem, s) => {
+            //const $ancestor = Array.from($removed).find(oldItem => oldItem.Part == currentItem.Part);
 
+             /*REMOVE MOVEDs*/
+             currentItem.Status = 'added';
+             
             // assign moving directives if true
-            if ($ancestor) {
+            /*if ($ancestor) {
                 $added.delete(currentItem);
                 $removed.delete($ancestor);
 
@@ -100,8 +103,8 @@ module.exports = class MovingFile {
             } else {
                 currentItem.Status = 'added';
                 movingMeta.added += 1;
-            }
-        });*/
+            }*/
+        });
 
         console.log($added.size, $removed.size);
 
