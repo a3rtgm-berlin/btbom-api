@@ -38,18 +38,18 @@ function xlsParser(input, tag, suffix = null) {
 function matrixParser(input) {
     // load from buffer, 
     const wb = XLSX.read(input, {type:"array"});
-    const ws = wb.Sheets['All'];
+    
+    const ws = wb.Sheets['BOM_ArbMatrix'];
 
     // create JSON from sheet
     const dataAsJson = XLSX.utils.sheet_to_json(ws);
-
     dataAsJson.forEach((el) => {
         if (el['Arb. Platz']) {
             el.ArbPlatz = el['Arb. Platz'];
             delete el['Arb. Platz'];
         }
     });
-
+    
     return dataAsJson;
 }
 

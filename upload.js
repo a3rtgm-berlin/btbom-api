@@ -147,6 +147,7 @@ function matrix (req, res) {
         reader.readAsArrayBuffer(file);
         reader.addEventListener('load', (evt) => {
             const view = new Uint8Array(reader.result);
+            console.log(reader.result);
             const newMatrix = parser.matrixParser(reader.result);
             const matrixObj = {
                 'json': newMatrix,
